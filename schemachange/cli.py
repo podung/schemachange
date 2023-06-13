@@ -209,6 +209,7 @@ class SnowflakeSchemachangeSession:
     + "'{status}','{user}',CURRENT_TIMESTAMP);"
   _q_set_sess_role = 'USE ROLE {role};'
   _q_set_sess_database = 'USE DATABASE {database};'
+  _q_set_sess_schema = 'USE SCHEMA {schema};'
   _q_set_sess_warehouse = 'USE WAREHOUSE {warehouse};'
    #endregion Query Templates
 
@@ -223,7 +224,7 @@ class SnowflakeSchemachangeSession:
     # Retreive Connection info from config dictionary
     self.conArgs = {"user": config['snowflake_user'],"account": config['snowflake_account'] \
       ,"role": config['snowflake_role'],"warehouse": config['snowflake_warehouse'] \
-      ,"database": config['snowflake_database'],"application": _snowflake_application_name \
+      ,"database": config['snowflake_database'],"schema": config['snowflake_schema'], "application": _snowflake_application_name \
       ,"session_parameters":session_parameters}
 
     self.oauth_config = config['oauth_config']
@@ -411,6 +412,8 @@ class SnowflakeSchemachangeSession:
       reset_query += self._q_set_sess_warehouse.format(**self.conArgs) + " "
     if self.conArgs['database']:
       reset_query += self._q_set_sess_database.format(**self.conArgs) + " "
+    if self.conArgs['schema']:
+      reset_query += self._q_set_sess_schema.format(**self.conArgs) + " "
 
     self.execute_snowflake_query(reset_query)
 
